@@ -16,22 +16,34 @@ const errorHandler = require('./middlewares/errorHandler');
 const app = express();
 
 // Middlewares globales
-app.use(helmet());
+// Desactivamos CSP y CORP en helmet para que no bloquee Swagger UI ni peticiones cross-origin
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(cors());
 app.use(express.json());
+
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Documentacion interactiva (Swagger UI) -> http://localhost:3000/api-docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Ruta de salud, util para verificar que el servidor esta arriba
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ estado: 'ok', mensaje: 'API de Gestion Medica funcionando correctamente.' });
+// Redirección de la raíz '/' a la documentación de Swagger
+app.get('/', (req, res) => {
+  res.redirect('/api-docs');
 });
 
-// Rutas publicas de autenticacion
+// Documentación interactiva (Swagger UI) -> /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Ruta de salud, útil para verificar que el servidor está arriba
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ estado: 'ok', mensaje: 'API de Gestión Médica funcionando correctamente.' });
+});
+
+// Rutas públicas de autenticación
 app.use('/api', authRoutes); // /api/register, /api/login, /api/logout
 
 // Rutas protegidas (CRUD)

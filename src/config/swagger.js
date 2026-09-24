@@ -10,7 +10,16 @@ const options = {
         'API RESTful en Express para gestionar pacientes, doctores y citas con autenticacion JWT. ' +
         'Proyecto: Universidad Luterana Salvadorena - Nuevas Tendencias de Programacion - Parcial II.',
     },
-    servers: [{ url: 'http://localhost:3000', description: 'Servidor local' }],
+    servers: [
+      { 
+        url: 'https://api-gestion-medica.onrender.com', 
+        description: 'Servidor de Producción (Render)' 
+      },
+      { 
+        url: 'http://localhost:3000', 
+        description: 'Servidor Local' 
+      }
+    ],
     components: {
       securitySchemes: {
         bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
